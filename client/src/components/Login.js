@@ -1,13 +1,48 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { axiosWithAuth } from '../utils/axiosWithAuth';
 
 const Login = () => {
-  // make a post request to retrieve a token from the api
-  // when you have handled the token, navigate to the BubblePage route
+  const [credentials, setCredentials] = useState({
+    username: '',
+    password: '',
+    isFetching: false
+  })
+
+  const login = (event) => {
+    event.preventDefault();
+    setCredentials({
+      isFetching: true
+    })
+    axiosWithAuth()
+      .post('/login', credentials)
+      .then(res => {
+        console.log(res);
+      })
+      .catch(err => {
+        console.log(err);
+      })
+  }
+
   return (
-    <>
+    <div>
       <h1>Welcome to the Bubble App!</h1>
-      <p>Build a login page here</p>
-    </>
+      <form onSubmit={login}>
+        <input
+          type='text'
+          name='username'
+          placeholder='username'
+          value={credentials.username}
+        />
+        <input
+          type='password'
+          name='password'
+          placeholder='password'
+          value={credentials.password}
+        />
+        <button>Log in</button>
+        {credentials.isFetching && 'logging in'}
+      </form>
+    </div>
   );
 };
 
