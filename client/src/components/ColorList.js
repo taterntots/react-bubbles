@@ -10,8 +10,9 @@ const ColorList = ({ colors, updateColors }) => {
   // console.log(colors);
   const [editing, setEditing] = useState(false);
   const [colorToEdit, setColorToEdit] = useState(initialColor);
+  const [colorToAdd, setColorToAdd] = useState(initialColor);
 
-  console.log(colorToEdit);
+  // console.log(colorToEdit);
 
   const editColor = color => {
     setEditing(true);
@@ -27,6 +28,9 @@ const ColorList = ({ colors, updateColors }) => {
         updateColors(colors.map(color => color.id === res.data.id ? res.data : color));
         setEditing(false);
       })
+      .catch(err => {
+        console.log(err);
+      })
   }
 
   const deleteColor = color => {
@@ -41,10 +45,22 @@ const ColorList = ({ colors, updateColors }) => {
         // }))
         updateColors(colors.filter(color => color.id !== res.data));
       })
+      .catch(err => {
+        console.log(err);
+      })
   }
 
-  const addColor = () => {
-    
+  const addColor = (event) => {
+    event.preventDefault();
+    axiosWithAuth()
+      .post(`http://localhost:5000/api/colors/`, colorToAdd)
+      .then(res => {
+        console.log(res);
+        updateColors(res.data);
+      })
+      .catch(err => {
+        console.log(err);
+      })
   }
 
   return (
@@ -100,37 +116,31 @@ const ColorList = ({ colors, updateColors }) => {
           </div>
         </form>
       )}
-      <div className='spacer' />
       <form onSubmit={addColor}>
         <legend>add color</legend>
         <label>
           color name:
                 <input
-            onChange={e =>
-              setColorToEdit({ ...colorToEdit, color: e.target.value })
-            }
-            value={colorToEdit.color}
+            onChange={e => setColorToAdd({ ...colorToAdd, color: e.target.value })}
+            value={colorToAdd.color}
           />
         </label>
         <label>
           hex code:
                 <input
             onChange={e =>
-              setColorToEdit({
-                ...colorToEdit,
+              setColorToAdd({
+                ...colorToAdd,
                 code: { hex: e.target.value }
               })
             }
-            value={colorToEdit.code.hex}
+            value={colorToAdd.code.hex}
           />
         </label>
         <div className="button-row">
           <button type="submit">save</button>
-          <button onClick={() => setEditing(false)}>cancel</button>
         </div>
       </form>
-      )}
-          <div className="spacer" />
     </div>
   );
 };
