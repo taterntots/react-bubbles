@@ -17,10 +17,19 @@ const Login = () => {
       .post('/login', credentials)
       .then(res => {
         console.log(res);
+        localStorage.setItem('token', res.data.payload);
       })
       .catch(err => {
         console.log(err);
       })
+  }
+
+  const handleChange = (event) => {
+    event.preventDefault();
+    setCredentials({
+      ...credentials,
+      [event.target.name]: event.target.value
+    })
   }
 
   return (
@@ -32,12 +41,14 @@ const Login = () => {
           name='username'
           placeholder='username'
           value={credentials.username}
+          onChange={handleChange}
         />
         <input
           type='password'
           name='password'
           placeholder='password'
           value={credentials.password}
+          onChange={handleChange}
         />
         <button>Log in</button>
         {credentials.isFetching && 'logging in'}
